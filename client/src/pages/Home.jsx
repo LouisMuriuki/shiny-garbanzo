@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Card, Loader, FormField } from "../components/Index";
 import { Link } from "react-router-dom";
+import Iframe from "../components/modals/Iframe";
 
-const RenderCards = ({ data, title }) => {
-  if (data?.length > 0) return data?.map((post, i) => <Card key={i} {...post} />);
+const RenderCards = ({ data, title,openModal, closeModal, }) => {
+  if (data?.length > 0) return data?.map((post, i) => <Card  key={i} {...post} />);
   return (
     <h2 className="mt-2 font-bold uppercase text-[#6449ff] text-xl">{title}</h2>
   );
@@ -59,6 +60,7 @@ const Home = () => {
     );
   };
 
+  
   return (
     <section className="max-w-7xl mx-auto">
       <div>
@@ -111,6 +113,7 @@ const Home = () => {
           </>
         )}
       </div>
+      
     </section>
   );
 };

@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { preview } from "../assets";
 import { getRandomPrompt } from "../utils/Index";
 import { FormField, Loader } from "../components/Index";
+import Iframe from "../components/modals/Iframe";
+import { AiOutlineEye } from "react-icons/ai";
 const CreatePost = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -12,6 +14,15 @@ const CreatePost = () => {
   });
   const [generatingimg, setGeneratingImg] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [modalIsOpen, setIsOpen] = useState(false);
+
+  function openModal() {
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,23 +30,28 @@ const CreatePost = () => {
       setLoading(true);
 
       try {
-        const response = await fetch("https://dalle-qgms.onrender.com/api/v1/post/", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(form),
-        });
-        console.log(response)
+        const response = await fetch(
+          "https://dalle-qgms.onrender.com/api/v1/post/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+          }
+        );
+        console.log(response);
         await response.json();
-        navigate("/");
+        if (response.ok) {
+          navigate("/");
+        }
       } catch (error) {
         alert(error);
       } finally {
         setLoading(false);
       }
-    }else{
-      alert("please enter a prompt and generate an image")
+    } else {
+      alert("please enter a prompt and generate an image");
     }
   };
 
@@ -52,13 +68,16 @@ const CreatePost = () => {
     if (form.prompt) {
       try {
         setGeneratingImg(true);
-        const response = await fetch("https://dalle-qgms.onrender.com/api/v1/dalle/", {
-          method: "POST",
-          headers: {
-            "content-Type": "application/json",
-          },
-          body: JSON.stringify({ prompt: form.prompt }),
-        });
+        const response = await fetch(
+          "https://dalle-qgms.onrender.com/api/v1/dalle/",
+          {
+            method: "POST",
+            headers: {
+              "content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt: form.prompt }),
+          }
+        );
         const data = await response.json();
         setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
       } catch (error) {
@@ -101,11 +120,20 @@ const CreatePost = () => {
           />
           <div className="relative bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 w-64 p-3 h-64 flex justify-center items-center">
             {form.photo ? (
-              <img
-                src={form.photo}
-                alt={form.photo}
-                className="w-full h-full object-contain"
-              />
+              <div className="relative w-full h-full">
+                <img
+                  src={form.photo}
+                  alt={form.prompt}
+                  onClick={openModal}
+                  className="w-full h-full cursor-pointer object-contain"
+                />
+                <div
+                  onClick={openModal}
+                  className="absolute inset-0 z-10 flex justify-center items-center opacity-0 cursor-pointer transition duration-300 bg-black bg-opacity-50 hover:opacity-100"
+                >
+                  <AiOutlineEye color="white" size={24} />
+                </div>
+              </div>
             ) : (
               <img
                 src={preview}
@@ -113,6 +141,7 @@ const CreatePost = () => {
                 className="w-9/12 object-contain h-9/12 opacity-40"
               />
             )}
+
             {generatingimg && (
               <div className="absolute flex justify-center items-center inset-0 z-0 bg-[rgba(0,0,0,0.5)] rounded-lg ">
                 <Loader />
@@ -137,12 +166,28 @@ const CreatePost = () => {
           <button
             className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:auto px-5 py-2.5 text-center"
             type="submit"
-            
           >
-            {loading ? "Sharing... Please wait" : "Share"}
+            {loading ? (
+              <div className="flex items-center justify-center">
+                <p>Sharing... Please wait</p>
+              </div>
+            ) : (
+              "Share"
+            )}
           </button>
         </div>
       </form>
+      <Iframe
+        img={form.photo}
+        modalIsOpen={modalIsOpen}
+        closeModal={closeModal}
+      >
+        <img
+          src={form.photo}
+          className="object-cover  p-10"
+          alt={form.prompt}
+        />
+      </Iframe>
     </section>
   );
 };

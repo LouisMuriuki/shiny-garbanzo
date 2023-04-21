@@ -3,7 +3,7 @@ import { Card, Loader, FormField } from "../components";
 
 const RenderCards = ({ data, title }) => {
   if (data.length > 0)
-    return data.map((post) => <Card key={post.id} {...post} />);
+    return data.map((post,i) => <Card key={i} {...post} />);
   return (
     <h2 className="mt-2 font-bold uppercase text-[#6449ff] text-xl">{title}</h2>
   );
@@ -11,8 +11,51 @@ const RenderCards = ({ data, title }) => {
 
 const Home = () => {
   const [loading, setLoading] = useState(false);
-  const [posts, setPosts] = useState(false);
+  const [posts, setPosts] = useState([]);
   const [searchtext, setSearchText] = useState("");
+  const [searchResults, setSearchedResults] = useState(null);
+  const [searchTimeout, setSeachTimeout] = useState(null);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch("http://localhost:8080/api/v1/post/", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        
+        if (response.ok) {
+          const result = await response.json();
+          console.log(result)
+          setPosts(result.data.reverse());
+        }
+      } catch (error) {
+        alert(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout);
+    setSearchText(e.target.value);
+    setSeachTimeout(
+      setTimeout(() => {
+        const searchResults = allPosts.filter(
+          (item) =>
+            item.name.toLowerCase().includes(searchtext.toLocaleLowerCase()) ||
+            item.prompt.toLowerCase().includes(searchtext.toLocaleLowerCase())
+        );
+        setSearchedResults(searchResults);
+      }, 500)
+    );
+  };
+
   return (
     <section className="max-w-7xl mx-auto">
       <div>
@@ -25,7 +68,7 @@ const Home = () => {
         </p>
       </div>
       <div className="mt-16">
-        <FormField />
+        <FormField type="text" labelName="search posts" name="text" placeholder="Search Posts" value={searchtext} handleChange={handleSearchChange}/>
       </div>
       <div className="mt-10 ">
         {loading ? (
@@ -41,9 +84,9 @@ const Home = () => {
             )}
             <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
               {searchtext ? (
-                <RenderCards data={[]} title="No search results Found" />
+                <RenderCards data={searchResults} title="No search results Found" />
               ) : (
-                <RenderCards data={[]} title="No Posts Found" />
+                <RenderCards data={posts} title="No Posts Found" />
               )}
             </div>
           </>

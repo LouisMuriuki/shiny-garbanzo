@@ -13,15 +13,31 @@ cloudinary.config({
 });
 
 router.route("/").get(async (req, res) => {
-    try {
-        const posts=await Post.find ({})
-        res.status(200).json({success:true,data:posts})
-    } catch (error) {
-        res.status(500).json({success:false,message:error})
-    }
+  console.log(req.body);
+  try {
+    const posts = await Post.find({});
+    res.status(200).json({ success: true, data: posts });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error });
+  }
 });
 
 //create a post
-router.route("/").get(async (req, res) => {
+router.route("/").post(async (req, res) => {
   try {
-    const { name, prompt,
+    const { name, prompt, photo } = req.body;
+    const photoURl = await cloudinary.uploader.upload(photo);
+console.log(photoURl);
+console.log(photoURl.url);
+    const newpost = await Post.create({
+      name,
+      prompt,
+      photo: photoURl.url,
+    });
+    console.log(newpost);
+    res.status(201).json({ success: true, data: newpost });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error });
+  }
+});
+export default router;

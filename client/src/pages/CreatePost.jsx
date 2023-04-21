@@ -11,16 +11,43 @@ const CreatePost = () => {
     photo: "",
   });
   const [generatingimg, setGeneratingImg] = useState(false);
-  const [loading, setSetloading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (form.prompt && form.photo) {
+      setLoading(true);
+
+      try {
+        const response = await fetch("http://localhost:8080/api/v1/post/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        });
+        console.log(response)
+        await response.json();
+        navigate("/");
+      } catch (error) {
+        alert(error);
+      } finally {
+        setLoading(false);
+      }
+    }else{
+      alert("please enetr a prompt and generate an image")
+    }
+  };
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+
   const handleSurpriseMe = () => {
     const randomPrompt = getRandomPrompt(form.prompt);
     setForm({ ...form, prompt: randomPrompt });
   };
+
   const generateImg = async () => {
     if (form.prompt) {
       try {
@@ -110,6 +137,7 @@ const CreatePost = () => {
           <button
             className="mt-3 text-white bg-[#6469ff] font-medium rounded-md text-sm w-full sm:auto px-5 py-2.5 text-center"
             type="submit"
+            
           >
             {loading ? "sharing...." : "Share"}
           </button>

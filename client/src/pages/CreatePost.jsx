@@ -139,7 +139,7 @@ const CreatePost = () => {
             type="submit"
             
           >
-            {loading ? "sharing...." : "Share"}
+            {loading ? "Sharing... Please wait" : "Share"}
           </button>
         </div>
       </form>

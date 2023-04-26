@@ -1,12 +1,15 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { preview } from "../assets";
-import { getRandomPrompt } from "../utils/Index";
+import { downloadImage, getRandomPrompt } from "../utils/Index";
 import { FormField, Loader } from "../components/Index";
 import Iframe from "../components/modals/Iframe";
 import { AiOutlineEye } from "react-icons/ai";
+import { FiDownload } from "react-icons/fi";
+import { useId } from "react";
 const CreatePost = () => {
   const navigate = useNavigate();
+  const id = useId();
   const [form, setForm] = useState({
     name: "",
     prompt: "",
@@ -15,6 +18,31 @@ const CreatePost = () => {
   const [generatingimg, setGeneratingImg] = useState(false);
   const [loading, setLoading] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
+  const [time, setTime] = useState(0);
+  const [textValue, setTextValue] = useState("Sharing... Please wait");
+
+  useEffect(() => {
+    let interval;
+    if (loading) {
+      interval = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 1000); // increase time every second
+    }
+
+    return () => clearInterval(interval);
+  }, [loading]); // run once on component mount
+
+  useEffect(() => {
+    if (loading) {
+      if (time > 15 && time <= 25) {
+        setTextValue("Good things take time...Please wait");
+      } else if (time > 25 && time <= 35) {
+        setTextValue("Almost there...Please wait");
+      } else if (time > 35) {
+        setTextValue("Finalising...Please wait");
+      }
+    }
+  }, [time, loading]);
 
   function openModal() {
     setIsOpen(true);
@@ -28,7 +56,6 @@ const CreatePost = () => {
     e.preventDefault();
     if (form.prompt && form.photo) {
       setLoading(true);
-
       try {
         const response = await fetch(
           "https://dalle-qgms.onrender.com/api/v1/post/",
@@ -79,6 +106,7 @@ const CreatePost = () => {
           }
         );
         const data = await response.json();
+        console.log(data);
         setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
       } catch (error) {
         console.log(error);
@@ -92,10 +120,15 @@ const CreatePost = () => {
   return (
     <section className="max-w-7xl mx-auto">
       <div>
-        <h1 className="font-extrabold text-[#222328]">Create</h1>
+        <h1 className="font-extrabold text-xl text-[#222328]">
+          Imagine and Create
+        </h1>
         <p className="mt-2 text-[#666e75] text=[16px] max-w-[500px]">
-          Create imaginative and visually stunning images with Dalle AI and
-          share them with the community
+          Create imaginative and visually stunning AI images and share them with
+          the community
+        </p>
+        <p className="mt-2 text-[#666e75] text=[16px] max-w-[500px]">
+          Your imagination is your only limit
         </p>
       </div>
       <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
@@ -149,14 +182,33 @@ const CreatePost = () => {
             )}
           </div>
         </div>
+
         <div className="mt-5 flex gap-5">
           <button
             type="button"
             onClick={generateImg}
             className="text-white bg-green-700 font-medium rounded-md  text-sm w-full sm:w-auto px-5 py-2.5 text-center"
           >
-            {generatingimg ? "Generating..." : "Generate"}
+            {generatingimg
+              ? "Generating..."
+              : form.photo
+              ? "Generate variantion"
+              : "Generate image"}
           </button>
+          {!form.photo || generatingimg ? null : (
+            <button
+              type="button"
+              onClick={() => downloadImage(id, form.photo)}
+              className="text-white bg-green-700 font-medium rounded-md  text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+            >
+              {form.photo && (
+                <div className="flex items-center justify-center gap-1">
+                  <FiDownload color="white" size={20} />
+                  Download image
+                </div>
+              )}
+            </button>
+          )}
         </div>
         <div className="mt-10">
           <p className="mt-2 text=[#666e75] text-[14px]">
@@ -169,7 +221,7 @@ const CreatePost = () => {
           >
             {loading ? (
               <div className="flex items-center justify-center">
-                <p>Sharing... Please wait</p>
+                <p>{textValue}</p>
               </div>
             ) : (
               "Share"

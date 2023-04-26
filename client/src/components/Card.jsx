@@ -13,6 +13,8 @@ const Card = ({ _id, name, prompt, photo }) => {
   function closeModal() {
     setIsOpen(false);
   }
+
+  
   return (
     <div className="rounded-xl group relative shadow-card hover:shadow-cardhover card">
       <img

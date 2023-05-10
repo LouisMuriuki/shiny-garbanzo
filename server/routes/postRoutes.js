@@ -13,10 +13,38 @@ cloudinary.config({
 });
 
 router.route("/").get(async (req, res) => {
-  console.log(req.body);
+  console.log(req.query);
   try {
-    const posts = await Post.find({});
-    res.status(200).json({ success: true, data: posts });
+    const page = req.query.page * 1 || 1;
+    const limit = req.query.limit*10 || 10;
+    const skip = (page - 1) * limit;
+    let nextpageexists;
+    let nextpage;
+
+    const postsquery = Post.find();
+    const numPosts = await Post.countDocuments();
+    if (req.query.page) {
+      if (skip > numPosts) {
+        return;
+      } else {
+        nextpage = nextpage + 1;
+        nextpageexists = true;
+      }
+    }
+    postsquery = postsquery.skip(skip).limit(limit);
+
+    const posts = await postsquery;
+    res
+      .status(200)
+      .json({
+        success: true,
+        data: posts.reverse(),
+        page: {
+          total: numPosts,
+          nextpageexists: nextpageexists,
+          nextpage: nextpage,
+        },
+      });
   } catch (error) {
     res.status(500).json({ success: false, message: error });
   }

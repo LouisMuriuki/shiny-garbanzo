@@ -18,10 +18,12 @@ const Home = () => {
   const [searchtext, setSearchText] = useState("");
   const [searchResults, setSearchedResults] = useState(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
+  const [page,setPage]=useState(1)
+  const [limit,setLimit]=useState(10)
 
   const GetPosts = useCallback(async () => {
     const res = await axios.get(
-      "https://dalle-qgms.onrender.com/api/v1/post/",
+      `http://localhost:8080/api/v1/post?page=${page}&limit=${limit}`,
       {
         method: "GET",
         headers: {
@@ -33,14 +35,14 @@ const Home = () => {
   }, []);
 
   const GetPostsQuery = useQuery({
-    queryKey: ["monthlymeetings"],
+    queryKey: ["monthlymeetings",page],
     queryFn: () => GetPosts(),
   });
 
   useEffect(() => {
-    setPosts(GetPostsQuery?.data?.data?.reverse());
+    setPosts(GetPostsQuery?.data?.data);
   }, [GetPostsQuery.data]);
- 
+console.log(GetPostsQuery.data)
 
   const handleSearchChange = (e) => {
     clearTimeout(searchTimeout);

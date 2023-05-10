@@ -16,18 +16,18 @@ router.route("/").get(async (req, res) => {
   console.log(req.query);
   try {
     const page = req.query.page * 1 || 1;
-    const limit = req.query.limit*10 || 10;
+    const limit = req.query.limit* 10 || 10;
     const skip = (page - 1) * limit;
     let nextpageexists;
     let nextpage;
 
-    const postsquery = Post.find();
+    const postsquery = Post.find({});
     const numPosts = await Post.countDocuments();
     if (req.query.page) {
       if (skip > numPosts) {
         return;
       } else {
-        nextpage = nextpage + 1;
+        nextpage = page + 1;
         nextpageexists = true;
       }
     }

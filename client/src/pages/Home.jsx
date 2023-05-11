@@ -48,7 +48,7 @@ const Home = () => {
   console.log(page);
   const GetPosts = useCallback(async ({ page, limit }) => {
     const res = await axios.get(
-      `http://localhost:8080/api/v1/post?page=${page}&limit=${limit}`,
+      `https://dalle-qgms.onrender.com/api/v1/post?page=${page}&limit=${limit}`,
       {
         method: "GET",
         headers: {

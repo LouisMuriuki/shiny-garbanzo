@@ -106,12 +106,12 @@ const Home = () => {
           <p className="mt-2 text-[#666e75] text-[16px] max-w-[800px] ">
             Create, download and share your very own AI images with the AIMAGEN
             community
-            {/* <Link
+            <Link
               to="/create-post"
               className="font-inter font-medium bg-[#6469ff] text-white px-4 py-2 pt-2 md:mt-0"
             >
               Create
-            </Link> */}
+            </Link>
           </p>
         </div>
       </div>

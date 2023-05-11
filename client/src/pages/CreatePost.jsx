@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { preview } from "../assets";
 import { downloadImage, getRandomPrompt } from "../utils/Index";
@@ -14,6 +14,7 @@ const CreatePost = () => {
     name: "",
     prompt: "",
     photo: "",
+    signature: "",
   });
   const [generatingimg, setGeneratingImg] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -57,16 +58,13 @@ const CreatePost = () => {
     if (form.prompt && form.photo) {
       setLoading(true);
       try {
-        const response = await fetch(
-          "https://dalle-qgms.onrender.com/api/v1/post/",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(form),
-          }
-        );
+        const response = await fetch("http://localhost:8080/api/v1/post/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        });
         console.log(response);
         await response.json();
         if (response.ok) {
@@ -76,6 +74,7 @@ const CreatePost = () => {
         alert(error);
       } finally {
         setLoading(false);
+        setTime(0);
       }
     } else {
       alert("please enter a prompt and generate an image");
@@ -107,7 +106,12 @@ const CreatePost = () => {
         );
         const data = await response.json();
         console.log(data);
-        setForm({ ...form, photo: `data:image/jpeg;base64,${data.photo}` });
+        const uniqueKey = localStorage.getItem("artsignature");
+        setForm({
+          ...form,
+          photo: `data:image/jpeg;base64,${data.photo}`,
+          signature: uniqueKey,
+        });
       } catch (error) {
         console.log(error);
       } finally {
@@ -124,7 +128,7 @@ const CreatePost = () => {
           Imagine and Create
         </h1>
         <p className="mt-2 text-[#666e75] text=[16px] max-w-[500px]">
-          Create imaginative and visually stunning AI images and share them with
+          Create imaginative and visually stunning AI art and share them with
           the community
         </p>
         <p className="mt-2 text-[#666e75] text=[16px] max-w-[500px]">
@@ -134,7 +138,7 @@ const CreatePost = () => {
       <form className="mt-16 max-w-3xl" onSubmit={handleSubmit}>
         <div className="flex flex-col gap-5">
           <FormField
-            labelName="Your Name"
+            labelName="Artist"
             type="text"
             name="name"
             placeholder="John Doe"
@@ -212,7 +216,7 @@ const CreatePost = () => {
         </div>
         <div className="mt-10">
           <p className="mt-2 text=[#666e75] text-[14px]">
-            Once you have created the image you want you can share it with
+            Once you have created the image you want, you can share it with
             others
           </p>
           <button

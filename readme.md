@@ -13,7 +13,7 @@ This is MERN Stack project for an Ai image Generator
 2. cd in to client folder
 3. install the dependencies  using `npm i`
 4. in the Home and createPost page files replace the server url `https://dalle-qgms.onrender.com` with `http://localhost:3000/` or any url that will ponit to your server.
-5. run the project useing  `npm run dev`
+5. run the project using  `npm run dev`
 
 
 ## Run Server
@@ -32,6 +32,6 @@ CLOUDINARY_NAME="name here"
 CLOUDINARY_API_KEY="api key"  
 CLOUDINARY_API_SECRET="your secrete"  
 
-9. run your project with `npm i` and your frontend should be able to communicate with the backend
+9. run your project with `npm start` and your frontend should be able to communicate with the backend
 
 10. Give this repo a star😎

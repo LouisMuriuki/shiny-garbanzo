@@ -25,7 +25,7 @@ This is MERN Stack project for an Ai image Generator
 5. Generate an Open AI key and store it in the readme. More info can be found here https://openai.com/
 6. Create a mongo DB collection and store the URL in the readme file.
 7. create a cloudinary account and store the credentials in the readme file
-8. here is an example of the the readme
+8. here is an example of the the readme  
 OPENAI_KEY="your key"  
 MONGODB_URL="your url"  
 CLOUDINARY_NAME="name here"  

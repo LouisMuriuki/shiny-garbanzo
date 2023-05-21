@@ -26,11 +26,11 @@ This is MERN Stack project for an Ai image Generator
 6. Create a mongo DB collection and store the URL in the readme file.
 7. create a cloudinary account and store the credentials in the readme file
 8. here is an example of the the readme
-OPENAI_KEY="your key"
-MONGODB_URL="your url"
-CLOUDINARY_NAME="name here"
-CLOUDINARY_API_KEY="api key"
-CLOUDINARY_API_SECRET="your secrete"
+OPENAI_KEY="your key"  
+MONGODB_URL="your url"  
+CLOUDINARY_NAME="name here"  
+CLOUDINARY_API_KEY="api key"  
+CLOUDINARY_API_SECRET="your secrete"  
 
 9. run your project with `npm i` and your frontend should be able to communicate with the backend
 

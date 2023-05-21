@@ -21,11 +21,11 @@ This is MERN Stack project for an Ai image Generator
 1. Clone this repository
 2. cd in to server folder
 3. install the dependencies  using `npm i`
-4. create a readme file in the root of the folder.
-5. Generate an Open AI key and store it in the readme. More info can be found here https://openai.com/
-6. Create a mongo DB collection and store the URL in the readme file.
-7. create a cloudinary account and store the credentials in the readme file
-8. here is an example of the the readme  
+4. create a `.env` file in the root of the folder.
+5. Generate an Open AI key and store it in the env. More info can be found here https://openai.com/
+6. Create a mongo DB collection and store the URL in the env file.
+7. create a cloudinary account and store the credentials in the env file
+8. here is an example of the the env  
 OPENAI_KEY="your key"  
 MONGODB_URL="your url"  
 CLOUDINARY_NAME="name here"  
